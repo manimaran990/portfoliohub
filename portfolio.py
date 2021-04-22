@@ -36,20 +36,20 @@ class MyPortfolio(object):
 				}
 			resp = requests.get(f"{g_url}/api/XAU/INR/{today}", headers=headers)
 			data = resp.json()
-			pre_pergram = math.floor(data['prev_close_price']/28.34952)
-			pergram = math.floor(data['price']/28.34952)
-			data.update({'gram_rate':pergram, 'prev_gram_rate':pre_pergram})
-			diffs = data['prev_gram_rate'] - data['gram_rate']
-			gold_data = { 
-				  'success': True,
-				  'gram_rate': data['gram_rate'], 
-				  'prev_gram_rate': data['prev_gram_rate'], 
-				  'date': data['date'],
-				  'difference': diffs if diffs < 0 else -abs(diffs)
-				   }
+			# pre_pergram = math.floor(data['prev_close_price']/28.34952)
+			# pergram = math.floor(data['price']/28.34952)
+			# data.update({'gram_rate':pergram, 'prev_gram_rate':pre_pergram})
+			# diffs = data['prev_gram_rate'] - data['gram_rate']
+			# gold_data = { 
+			# 	  'success': True,
+			# 	  'gram_rate': data['gram_rate'], 
+			# 	  'prev_gram_rate': data['prev_gram_rate'], 
+			# 	  'date': data['date'],
+			# 	  'difference': diffs if diffs < 0 else -abs(diffs)
+			# 	   }
 		except Exception as e:
 			return {"success": False, "error": str(e)}
-		return gold_data
+		return data
 
 	def get_currencyrate(self):
 		# Making request
