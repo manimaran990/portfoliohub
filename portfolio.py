@@ -47,7 +47,7 @@ class MyPortfolio(object):
 				  'gram_rate': data['gram_rate'], 
 				  'prev_gram_rate': data['prev_gram_rate'], 
 				  'date': data['date'],
-				  'difference': diffs if diffs < 0 else -abs(diffs)
+				  'difference': -abs(diffs) if diffs < 0 else diffs
 				   }
 		except Exception as e:
 			return {"success": False, "error": str(e)}
