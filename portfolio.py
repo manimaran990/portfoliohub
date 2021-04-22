@@ -29,15 +29,13 @@ class MyPortfolio(object):
 		try:
 			now = datetime.today() - timedelta(1)
 			today = now.strftime('%Y%m%d')
-			conn = http.client.HTTPSConnection("www.goldapi.io")
-			payload = ''
+			g_url = "http://goldapi.io"
 			headers = {
 			  'x-access-token': 'goldapi-19cthukkyajvg1-io',
 				'Content-Type': 'application/json'
 				}
-			conn.request("GET", "/api/XAU/INR/{}".format(today), payload, headers)
-			res = conn.getresponse()
-			data = json.loads(res.read().decode('utf-8'))
+			resp = requests.get(f"{g_url}/api/XAU/INR/{today}", headers=headers)
+			data = resp.json()
 			pre_pergram = math.floor(data['prev_close_price']/28.34952)
 			pergram = math.floor(data['price']/28.34952)
 			data.update({'gram_rate':pergram, 'prev_gram_rate':pre_pergram})
@@ -128,6 +126,6 @@ class MyPortfolio(object):
 if __name__ == '__main__':
 	mp = MyPortfolio()
 	print(mp.get_goldrate())
-	print(mp.get_currencyrate())
-	print(mp.get_mf_nav_rates())
-	print(mp.get_bitcoin_rates())
+	# print(mp.get_currencyrate())
+	# print(mp.get_mf_nav_rates())
+	# print(mp.get_bitcoin_rates())
