@@ -11,6 +11,7 @@ from datetime import datetime, timedelta
 from functools import reduce
 import pytz
 
+
 class MyPortfolio(object):
 	def __init__(self):
 		self.xch_url = "https://v6.exchangerate-api.com/v6/931fba7839f1267eba9ede7f/latest/CAD" #url for cad to inr rate
@@ -31,23 +32,18 @@ class MyPortfolio(object):
 			tz = pytz.timezone('America/Toronto')
 			now = datetime.now(tz) - timedelta(1)
 			today = now.strftime('%Y%m%d')
-			g_url = "http://goldapi.io"
-			headers = {
-			  'x-access-token': 'goldapi-19cthukkyajvg1-io',
-				'Content-Type': 'application/json'
-				}
-			resp = requests.get(f"{g_url}/api/XAU/INR/{today}", headers=headers)
-			data = resp.json()
-			pre_pergram = math.floor(data['prev_close_price']/28.34952)
-			pergram = math.floor(data['price']/28.34952)
-			data.update({'gram_rate':pergram, 'prev_gram_rate':pre_pergram})
-			diffs =  data['gram_rate'] - data['prev_gram_rate']
+			g_url = "https://metals-api.com/api/latest?access_key=3o8sb04s2638kp4kgfzkdjvb07teli4q81yj6rxcqreo71dyfr2ttda13j4f&base=INR&symbols=XAU"
+			data = requests.get(f"{g_url}").json()
+			if data['success']:
+				pergram = math.floor(data['price']/28.34952)
+				data.update({'gram_rate':pergram})
+			else:
+				return {"success": False}
 			gold_data = { 
 				  'success': True,
 				  'gram_rate': data['gram_rate'], 
-				  'prev_gram_rate': data['prev_gram_rate'], 
-				  'date': data['date'],
-				  'difference': diffs
+				  'ounce': data['price'], 
+				  'date': data['date']
 				   }
 		except Exception as e:
 			return {"success": False, "error": str(e)}
