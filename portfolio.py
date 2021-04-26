@@ -35,14 +35,14 @@ class MyPortfolio(object):
 			g_url = "https://metals-api.com/api/latest?access_key=3o8sb04s2638kp4kgfzkdjvb07teli4q81yj6rxcqreo71dyfr2ttda13j4f&base=INR&symbols=XAU"
 			data = requests.get(f"{g_url}").json()
 			if data['success']:
-				pergram = math.floor(data['price']/28.34952)
+				pergram = math.floor(data['rates']['XAU']/28.34952)
 				data.update({'gram_rate':pergram})
 			else:
 				return {"success": False}
 			gold_data = { 
 				  'success': True,
 				  'gram_rate': data['gram_rate'], 
-				  'ounce': data['price'], 
+				  'ounce': math.floor(data['rates']['XAU']), 
 				  'date': data['date']
 				   }
 		except Exception as e:
