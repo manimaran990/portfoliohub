@@ -10,6 +10,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 from functools import reduce
 import pytz
+from bs4 import BeautifulSoup
+from fastapi.responses import HTMLResponse
 
 
 class MyPortfolio(object):
@@ -25,26 +27,16 @@ class MyPortfolio(object):
 		   "axis_smallcap": 125354,
 		   "mo_nasdaq_fof": 145552
 		}
+		self.headers = {
+		    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:84.0) Gecko/20100101 Firefox/84.0",
+		}
 
 	#to get current gold rate in inr
 	def get_goldrate(self):
 		try:
-			tz = pytz.timezone('America/Toronto')
-			now = datetime.now(tz) - timedelta(1)
-			today = now.strftime('%Y%m%d')
-			g_url = "https://metals-api.com/api/latest?access_key=3o8sb04s2638kp4kgfzkdjvb07teli4q81yj6rxcqreo71dyfr2ttda13j4f&base=INR&symbols=XAU"
-			data = requests.get(f"{g_url}").json()
-			if data['success']:
-				pergram = math.floor(data['rates']['XAU']/28.34952)
-				data.update({'gram_rate':pergram})
-			else:
-				return {"success": False}
-			gold_data = { 
-				  'success': True,
-				  'gram_rate': data['gram_rate'], 
-				  'ounce': math.floor(data['rates']['XAU']), 
-				  'date': data['date']
-				   }
+			page = requests.get('https://www.kitco.com/gold-price-today-india/index.html', headers=self.headers).text
+			soup = BeautifulSoup(page, 'html.parser').find_all(class_="table-price--body-table--overview-detail")
+			return HTMLResponse(content=soup[0], status_code=200)
 		except Exception as e:
 			return {"success": False, "error": str(e)}
 		return gold_data
